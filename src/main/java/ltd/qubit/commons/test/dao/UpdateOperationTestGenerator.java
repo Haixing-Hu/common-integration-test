@@ -22,6 +22,7 @@ import ltd.qubit.commons.reflect.Property;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static ltd.qubit.commons.test.dao.DaoTestUtils.copyAllProperties;
 import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
