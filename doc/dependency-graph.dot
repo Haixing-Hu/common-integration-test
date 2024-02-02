@@ -1,0 +1,31 @@
+digraph "common-integration-test" {
+  node [shape="box",style="rounded",fontname="Helvetica",fontsize="14"]
+  edge [fontsize="10",fontname="Helvetica"]
+
+  // Node Definitions:
+  "ltd.qubit:common-integration-test:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-integration-test>]
+  "ltd.qubit:common-annotation:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-annotation>]
+  "ltd.qubit:common-java:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-java>]
+  "ltd.qubit:common-random:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-random<font point-size="10"><br/>(compile/test)</font>>]
+  "ltd.qubit:common-unit-test:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-unit-test>]
+  "ltd.qubit:common-error:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-error>]
+  "ltd.qubit:common-model:jar"[label=<<font point-size="10">ltd.qubit</font><br/>common-model>]
+
+  // Edge Definitions:
+  "ltd.qubit:common-integration-test:jar" -> "ltd.qubit:common-annotation:jar"
+  "ltd.qubit:common-java:jar" -> "ltd.qubit:common-annotation:jar"[style="dotted"]
+  "ltd.qubit:common-integration-test:jar" -> "ltd.qubit:common-java:jar"
+  "ltd.qubit:common-random:jar" -> "ltd.qubit:common-annotation:jar"[style="dotted"]
+  "ltd.qubit:common-random:jar" -> "ltd.qubit:common-java:jar"[style="dotted"]
+  "ltd.qubit:common-integration-test:jar" -> "ltd.qubit:common-random:jar"
+  "ltd.qubit:common-unit-test:jar" -> "ltd.qubit:common-annotation:jar"[style="dotted"]
+  "ltd.qubit:common-unit-test:jar" -> "ltd.qubit:common-java:jar"[style="dotted"]
+  "ltd.qubit:common-unit-test:jar" -> "ltd.qubit:common-random:jar"[style="dotted"]
+  "ltd.qubit:common-integration-test:jar" -> "ltd.qubit:common-unit-test:jar"
+  "ltd.qubit:common-error:jar" -> "ltd.qubit:common-annotation:jar"[style="dotted"]
+  "ltd.qubit:common-error:jar" -> "ltd.qubit:common-java:jar"[style="dotted"]
+  "ltd.qubit:common-model:jar" -> "ltd.qubit:common-annotation:jar"[style="dotted"]
+  "ltd.qubit:common-model:jar" -> "ltd.qubit:common-java:jar"[style="dotted"]
+  "ltd.qubit:common-error:jar" -> "ltd.qubit:common-model:jar"
+  "ltd.qubit:common-integration-test:jar" -> "ltd.qubit:common-error:jar"
+}
