@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
+import javax.annotation.Nullable;
+
 import ltd.qubit.commons.test.dao.testbed.model.District;
 import ltd.qubit.commons.test.dao.testbed.model.Info;
-
-import javax.annotation.Nullable;
 
 public class DistrictDaoImpl extends DaoImplBase<District>
     implements DistrictDao {

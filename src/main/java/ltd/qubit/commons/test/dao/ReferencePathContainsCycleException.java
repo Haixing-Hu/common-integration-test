@@ -8,9 +8,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import ltd.qubit.commons.reflect.BeanInfo;
-
 import java.util.List;
+
+import ltd.qubit.commons.reflect.BeanInfo;
 
 public class ReferencePathContainsCycleException extends IllegalArgumentException {
 

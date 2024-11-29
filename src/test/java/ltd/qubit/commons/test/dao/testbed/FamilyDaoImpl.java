@@ -8,12 +8,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.dao.testbed.model.Family;
-import ltd.qubit.commons.test.dao.testbed.model.SubFamily;
+import java.time.Instant;
 
 import org.springframework.dao.DataAccessException;
 
-import java.time.Instant;
+import ltd.qubit.commons.test.dao.testbed.model.Family;
+import ltd.qubit.commons.test.dao.testbed.model.SubFamily;
 
 public class FamilyDaoImpl extends SimpleDaoImpl<Family> implements FamilyDao {
 

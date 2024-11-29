@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
+import org.springframework.dao.DataAccessException;
+
 import ltd.qubit.commons.test.dao.testbed.model.Identifiable;
 import ltd.qubit.commons.test.dao.testbed.model.WithName;
-
-import org.springframework.dao.DataAccessException;
 
 /**
  * 此接口表示对拥有{@code name}属性的实体类实现了查询操作的DAO。

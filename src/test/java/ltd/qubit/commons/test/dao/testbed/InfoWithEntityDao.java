@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
+import org.springframework.dao.DataAccessException;
+
 import ltd.qubit.commons.test.dao.testbed.model.Info;
 import ltd.qubit.commons.test.dao.testbed.model.InfoWithEntity;
-
-import org.springframework.dao.DataAccessException;
 
 public interface InfoWithEntityDao<T extends Info> extends InfoDao<T> {
 

@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
+import java.time.Instant;
+
 import ltd.qubit.commons.test.dao.testbed.model.Grandpa;
 import ltd.qubit.commons.test.dao.testbed.model.Parent;
-
-import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,7 +24,7 @@ public class GrandpaDaoImpl extends SimpleDaoImpl<Grandpa> implements GrandpaDao
     this.parentDao = requireNonNull(parentDao);
   }
 
-  public Instant add(Grandpa entity) {
+  public Instant add(final Grandpa entity) {
     final Instant result = super.add(entity);
     // TODO: check validity
     final Parent child = entity.getChild();

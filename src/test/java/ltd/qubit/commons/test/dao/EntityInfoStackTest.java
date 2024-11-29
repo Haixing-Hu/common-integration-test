@@ -8,6 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
+import java.util.Arrays;
+
+import org.junit.jupiter.api.Test;
+
 import ltd.qubit.commons.reflect.BeanInfo;
 import ltd.qubit.commons.reflect.Property;
 import ltd.qubit.commons.test.dao.testbed.model.Address;
@@ -17,10 +21,6 @@ import ltd.qubit.commons.test.dao.testbed.model.Family;
 import ltd.qubit.commons.test.dao.testbed.model.Grandpa;
 import ltd.qubit.commons.test.dao.testbed.model.Parent;
 import ltd.qubit.commons.test.dao.testbed.model.Province;
-
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

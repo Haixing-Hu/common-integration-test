@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
+import org.springframework.dao.DataAccessException;
+
 import ltd.qubit.commons.test.dao.testbed.model.Category;
 import ltd.qubit.commons.test.dao.testbed.model.InfoWithEntity;
-
-import org.springframework.dao.DataAccessException;
 
 /**
  * 存取{@link Category}对象的DAO的接口。

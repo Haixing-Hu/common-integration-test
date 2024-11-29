@@ -8,12 +8,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
 
 public class ExistOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
 

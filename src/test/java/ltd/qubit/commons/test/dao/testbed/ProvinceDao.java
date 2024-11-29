@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
+import org.springframework.dao.DataAccessException;
+
 import ltd.qubit.commons.test.dao.testbed.model.Country;
 import ltd.qubit.commons.test.dao.testbed.model.Province;
-
-import org.springframework.dao.DataAccessException;
 
 /**
  * 存取{@link Province}对象的DAO的接口。
