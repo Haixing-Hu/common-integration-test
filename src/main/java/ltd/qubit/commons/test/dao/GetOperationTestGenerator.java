@@ -16,8 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static ltd.qubit.commons.reflect.ClassUtils.isMutableType;
-import static ltd.qubit.commons.reflect.ClassUtils.isPrimitiveType;
+import static ltd.qubit.commons.lang.ClassUtils.isMutableType;
+import static ltd.qubit.commons.lang.ClassUtils.isPrimitiveType;
+import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
 
 public class GetOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
 
@@ -129,7 +130,7 @@ public class GetOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
       // dao.getYyyByXxx(id)
       return methodInfo.invoke(logging, id);
     } else {
-      final Object[] params = DaoTestUtils.getRespectToParams(model, modelInfo, identifier, methodInfo);
+      final Object[] params = getRespectToParams(model, modelInfo, identifier, methodInfo);
       // dao.getYyyByXxx(key1, key2, ..., id)
       return methodInfo.invokeWithArguments(logging, params);
     }

@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.City;
+import ltd.qubit.commons.test.dao.testbed.model.City;
 
 /**
  * 存取{@link City}对象的DAO的接口。

@@ -11,12 +11,15 @@ package ltd.qubit.commons.test.dao;
 import javax.annotation.Nullable;
 
 import ltd.qubit.commons.error.DataNotExistException;
+import ltd.qubit.commons.reflect.Property;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
 
 public class EraseOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
 
@@ -35,12 +38,14 @@ public class EraseOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
     final String displayName = getDisplayName("Existing " + modelName);
     final int loops = parameters.getLoops();
     builder.add(displayName, () -> {
+      final Property idProperty = modelInfo.getIdProperty();
+      assertNotNull(idProperty, "The ID property of " + modelName + " must not be null.");
       for (int i = 0; i < loops; ++i) {
         logger.info("Test {}: Erase an existing {}: {} of {}", methodName,
             modelName, i + 1, loops);
         final Object model = beanCreator.prepare(modelInfo, identifier);
         daoInfo.add(model);  // dao.add(model)
-        final Object id = modelInfo.getId(model);
+        final Object id = idProperty.getValue(model);
         assertTrue(daoInfo.exist(id), "The ID of just added model must exist.");
         // dao.erase(model.id) or dao.eraseByXxx(model.xxx)
         final Object returnedValue = doErase(true, model);
@@ -52,7 +57,7 @@ public class EraseOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
         final DataNotExistException e = assertThrows(DataNotExistException.class,
             () -> getMethod.invoke(false, id),  // dao.get(id)
             "Getting a non-existing ID must throw an exception.");
-        checkException(e, modelInfo.getIdProperty(), id);
+        checkException(e, idProperty, id);
       }
     });
   }
@@ -62,7 +67,7 @@ public class EraseOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
       final Object id = identifier.getValue(model);
       return methodInfo.invoke(logging, id);     // dao.erase(id) or dao.eraseByXxx(id)
     } else {
-      final Object[] params = DaoTestUtils.getRespectToParams(model, modelInfo, identifier, methodInfo);
+      final Object[] params = getRespectToParams(model, modelInfo, identifier, methodInfo);
       return methodInfo.invokeWithArguments(logging, params); // dao.eraseByXxx(key1, key2, ..., id)
     }
   }

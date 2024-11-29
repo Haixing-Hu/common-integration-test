@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Grandpa;
-import ltd.qubit.commons.test.model.Parent;
+import ltd.qubit.commons.test.dao.testbed.model.Grandpa;
+import ltd.qubit.commons.test.dao.testbed.model.Parent;
 
 import java.time.Instant;
 

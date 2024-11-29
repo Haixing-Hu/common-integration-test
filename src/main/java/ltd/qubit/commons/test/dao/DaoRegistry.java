@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
+import java.io.Serial;
 import java.util.HashMap;
 
 import ltd.qubit.commons.lang.ClassKey;
@@ -18,6 +19,8 @@ import ltd.qubit.commons.lang.ClassKey;
  * @author Haixing Hu
  */
 public class DaoRegistry extends HashMap<ClassKey, Object> {
+  @Serial
   private static final long serialVersionUID = 5169238167764580580L;
+
   //  empty
 }

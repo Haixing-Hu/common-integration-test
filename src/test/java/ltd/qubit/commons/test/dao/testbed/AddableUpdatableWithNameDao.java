@@ -13,8 +13,13 @@ import java.time.Instant;
 import org.springframework.dao.DataAccessException;
 
 import ltd.qubit.commons.annotation.Unmodified;
-import ltd.qubit.commons.test.model.Identifiable;
-import ltd.qubit.commons.test.model.WithName;
+import ltd.qubit.commons.error.FieldTooLongException;
+import ltd.qubit.commons.error.FieldValueOutOfRangeException;
+import ltd.qubit.commons.error.ForeignKeyConstraintFailException;
+import ltd.qubit.commons.error.InvalidFieldFormatException;
+import ltd.qubit.commons.error.NullFieldException;
+import ltd.qubit.commons.test.dao.testbed.model.Identifiable;
+import ltd.qubit.commons.test.dao.testbed.model.WithName;
 
 /**
  * 此接口表示实现根据名称添加或更新实体操作的DAO。

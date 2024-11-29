@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.District;
+import ltd.qubit.commons.test.dao.testbed.model.District;
 
 /**
  * 存取{@link District}对象的DAO的接口。

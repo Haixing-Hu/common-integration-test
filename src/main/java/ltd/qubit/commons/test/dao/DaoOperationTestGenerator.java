@@ -25,15 +25,17 @@ import ltd.qubit.commons.error.DataNotExistException;
 import ltd.qubit.commons.error.DuplicateKeyException;
 import ltd.qubit.commons.error.FieldTooLongException;
 import ltd.qubit.commons.error.NullFieldException;
+import ltd.qubit.commons.lang.ClassUtils;
 import ltd.qubit.commons.reflect.BeanInfo;
-import ltd.qubit.commons.reflect.ClassUtils;
 import ltd.qubit.commons.reflect.Property;
 import ltd.qubit.commons.test.TestGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import static ltd.qubit.commons.lang.Argument.requireNonNull;
@@ -82,10 +84,11 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
       throw new IllegalArgumentException("No ID property found for the model: "
           + modelInfo.getName());
     }
-    this.identifierName = identifier.getQualifiedName();
+    this.identifierName = identifier.getFullQualifiedName();
     this.target = methodInfo.getTarget();
-    this.targetName = (target == null ? modelInfo.getName()
-                                      : target.getQualifiedName());
+    this.targetName = (target == null
+                       ? modelInfo.getName()
+                       : modelInfo.getName() + "." + target.getName());
     this.beanCreator = new BeanCreator(registry);
   }
 
@@ -106,6 +109,7 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
 
   protected abstract void buildTests(DaoDynamicTestBuilder builder);
 
+  @Override
   public final List<DynamicNode> generate() throws Exception {
     final DaoDynamicTestBuilder builder = new DaoDynamicTestBuilder(this);
     buildTests(builder);
@@ -218,7 +222,7 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
    */
   protected static void checkException(final DuplicateKeyException e,
       final Property key, final Object value) {
-    assertEquals(LOWER_CAMEL.to(LOWER_UNDERSCORE, key.getName()), e.getKey(),
+    assertEquals(LOWER_CAMEL.to(LOWER_UNDERSCORE, key.getName()), e.getField(),
         "Thrown DuplicateKeyException must catch the duplicated field.");
     assertEquals(fixMySqlValueLength(value), fixMySqlValueLength(e.getValue()),
         "Thrown DuplicateKeyException must catch the duplicated value.");
@@ -244,6 +248,9 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
       fail(message);
     } else if (! expected.equals(actual)) {
       for (final Property prop : modelInfo.getNonComputedProperties()) {
+        if (prop.isComputed() || prop.isTransientField()) {
+          continue;   // 忽略 只读属性 和 transient 字段
+        }
         final Object expectedPropValue = prop.getValue(expected);
         final Object actualPropValue = prop.getValue(actual);
         assertValueEquals(prop.getType(), prop.isReference(), expectedPropValue,
@@ -269,13 +276,16 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
       @NotNull final Object updatedModel) {
     assert newModel != null && updatedModel != null;
     for (final Property prop : methodInfo.getModifiedProperties()) {
+      if (prop.isReadonly() || prop.isComputed() || prop.isTransientField()) {
+        continue;
+      }
       final Object oldValue = (oldModel == null ? null : prop.getValue(oldModel));
       final Object newValue = normalize(prop.getValue(newModel));
       final Object updatedValue = normalize(prop.getValue(updatedModel));
-      logger.info("[{}] Verifying updated {}: {} -> {}",
-          methodInfo.getQualifiedName(), prop.getQualifiedName(), oldValue, newValue);
+      logger.debug("[{}] Verifying updated {}: {} -> {}",
+          methodInfo.getQualifiedName(), prop.getFullQualifiedName(), oldValue, newValue);
       assertValueEquals(prop.getType(), prop.isReference(), newValue, updatedValue,
-          "The property " + prop.getQualifiedName() + " should be updated.");
+          "The property " + prop.getFullQualifiedName() + " should be updated.");
     }
   }
 
@@ -294,15 +304,17 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
     assert oldModel != null && updatedModel != null;
     final Set<Property> unmodifiedProperties = methodInfo.getUnmodifiedProperties();
     for (final Property prop : unmodifiedProperties) {
-      if (prop.isReadonly() || prop.isComputed()) {
+      if (prop.isReadonly() || prop.isComputed() || prop.isTransientField()) {
         continue;
       }
       final Object oldValue = normalize(prop.getValue(oldModel));
       final Object updatedValue = normalize(prop.getValue(updatedModel));
-      logger.info("[{}] Verifying unmodified {}: {}",
-          methodInfo.getQualifiedName(), prop.getQualifiedName(), updatedValue);
-      assertValueAbsoluteEquals(prop.getType(), oldValue, updatedValue,
-          "The property " + prop.getQualifiedName() + " should NOT be updated.");
+      logger.debug("[{}] Verifying unmodified {}: {}",
+          methodInfo.getQualifiedName(), prop.getFullQualifiedName(), updatedValue);
+      // assertValueAbsoluteEquals(prop.getType(), oldValue, updatedValue,
+      //     "The property " + prop.getQualifiedName() + " should NOT be updated.");
+      assertValueEquals(prop.getType(), prop.isReference(), oldValue, updatedValue,
+          "The property " + prop.getFullQualifiedName() + " should NOT be updated.");
     }
   }
 
@@ -335,9 +347,6 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
     } else if (type.isArray()) {                    // 递归处理数组类型
       assertArrayValueEquals(type, isReference, (Object[]) expected,
           (Object[]) actual, message);
-    } else if (ClassUtils.isCollectionType(type)) { // 递归处理集合类型
-      assertCollectionValueEquals(type, isReference, (Collection<?>) expected,
-          (Collection<?>) actual, message);
     } else if (ClassUtils.isCollectionType(type)) { // 递归处理集合类型
       assertCollectionValueEquals(type, isReference, (Collection<?>) expected,
           (Collection<?>) actual, message);
@@ -411,20 +420,53 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
       final Collection<?> expected, final Collection<?> actual,
       final String message) {
     assertEquals(expected.size(), actual.size(), message);
-    // FIXME: 对于无序集合，比如Set，如何处理？
-    final Iterator<?> expectedIter = expected.iterator();
-    final Iterator<?> actualIter = actual.iterator();
-    while (expectedIter.hasNext()) {
-      final Object expectedElement = expectedIter.next();
-      final Object actualElement = actualIter.next();
+    if (expected instanceof Set) {
+      assertInstanceOf(Set.class, actual, message);
+      assertSetValueEquals(type, isReference, (Set<?>) expected, (Set<?>) actual, message);
+    } else {
+      final Iterator<?> expectedIter = expected.iterator();
+      final Iterator<?> actualIter = actual.iterator();
+      while (expectedIter.hasNext()) {
+        final Object expectedElement = expectedIter.next();
+        final Object actualElement = actualIter.next();
+        if (expectedElement == null) {
+          assertNull(actualElement, message);
+        } else if (actualElement == null) {
+          fail(message);
+        } else {
+          final Class<?> elementType = expectedElement.getClass();
+          assertValueEquals(elementType, isReference, expectedElement, actualElement, message); // 递归调用
+        }
+      }
+    }
+  }
+
+  /**
+   * 确保实际的Set和期望Set一致。
+   *
+   * <p>此操作会考虑被比较的集合元素的内部结构。如果是复杂的实体对象，还需考虑更新操作对其
+   * 带来的影响（即其某些属性会被改变某些属性不会被改变）。</p>
+   *
+   * <p>此函数将递归调用{@link #assertValueEquals(Class, boolean, Object, Object, String)}</p>
+   *
+   * @param type
+   *     待比较的集合的类型。
+   * @param expected
+   *     期望的集合。
+   * @param actual
+   *     实际的集合。
+   * @param message
+   *     错误消息。
+   */
+  private void assertSetValueEquals(final Class<?> type, final boolean isReference,
+      final Set<?> expected, final Set<?> actual, final String message) {
+    assertEquals(expected.size(), actual.size(), message);
+    for (final Object expectedElement : expected) {
       if (expectedElement == null) {
-        assertNull(actualElement, message);
-      } else if (actualElement == null) {
-        fail(message);
+        assertTrue(actual.contains(null), message);
       } else {
-        final Class<?> elementType = expectedElement.getClass();
-        assertValueEquals(elementType, isReference, expectedElement,
-            actualElement, message); // 递归调用
+        // FIXME: 应该有更好的方法来判断两个Set是否相等
+        assertTrue(actual.contains(expectedElement), message);
       }
     }
   }
@@ -459,8 +501,7 @@ public abstract class DaoOperationTestGenerator<T> extends TestGenerator {
         fail(message);
       } else {
         final Class<?> elementType = expectedValue.getClass();
-        assertValueEquals(elementType, isReference, expectedValue,
-            actualValue, message); // 递归调用
+        assertValueEquals(elementType, isReference, expectedValue, actualValue, message); // 递归调用
       }
     }
   }

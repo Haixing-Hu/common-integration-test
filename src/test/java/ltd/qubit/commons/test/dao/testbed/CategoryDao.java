@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Category;
-import ltd.qubit.commons.test.model.InfoWithEntity;
+import ltd.qubit.commons.test.dao.testbed.model.Category;
+import ltd.qubit.commons.test.dao.testbed.model.InfoWithEntity;
 
 import org.springframework.dao.DataAccessException;
 

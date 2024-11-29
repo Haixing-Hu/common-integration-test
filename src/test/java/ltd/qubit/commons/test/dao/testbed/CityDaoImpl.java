@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.City;
-import ltd.qubit.commons.test.model.Info;
+import ltd.qubit.commons.test.dao.testbed.model.City;
+import ltd.qubit.commons.test.dao.testbed.model.Info;
 
 import javax.annotation.Nullable;
 

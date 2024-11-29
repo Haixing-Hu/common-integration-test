@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Grandpa;
+import ltd.qubit.commons.test.dao.testbed.model.Grandpa;
 
 public interface GrandpaDao extends GettableDao<Grandpa>, AddableDao<Grandpa>,
     UpdatableDao<Grandpa>, ErasableDao<Grandpa> {

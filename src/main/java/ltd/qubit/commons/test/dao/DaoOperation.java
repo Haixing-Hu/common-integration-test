@@ -20,6 +20,9 @@ import static ltd.qubit.commons.reflect.Option.DEFAULT;
  */
 public enum DaoOperation {
 
+  EXIST_IF("^existIf$",
+      ExistIfOperationTestGenerator.class),
+
   EXIST_NON_DELETED("^existNonDeleted(\\p{Upper}\\p{Alpha}+)?$",
       ExistNonDeletedOperationTestGenerator.class),
 
@@ -29,10 +32,11 @@ public enum DaoOperation {
   COUNT("^count$",
       CountOperationTestGenerator.class),
 
-  LIST("^list$",
+  LIST("^list(\\p{Upper}\\p{Alpha}+?)?$",
       ListOperationTestGenerator.class),
 
-  GET_OR_NULL("^get(?:(\\p{Upper}\\p{Alpha}+?)??(?:By(\\p{Upper}\\p{Alpha}+))?)?OrNull$",
+  // 注意：不能把 GET_ELSE_NULL 的正则表达式合并到 GET 中，否则会无法正确匹配到一些方法
+  GET_ELSE_NULL("^get(?:(\\p{Upper}\\p{Alpha}+?)??(?:By(\\p{Upper}\\p{Alpha}+))?)?ElseNull$",
       GetOperationTestGenerator.class),
 
   GET("^get(?:(\\p{Upper}\\p{Alpha}+?)??(?:By(\\p{Upper}\\p{Alpha}+))?)?$",

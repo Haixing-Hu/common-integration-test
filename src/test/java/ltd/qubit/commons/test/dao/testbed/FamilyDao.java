@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Family;
+import ltd.qubit.commons.test.dao.testbed.model.Family;
 
 public interface FamilyDao extends GettableDao<Family>, AddableDao<Family>,
     UpdatableDao<Family>, ErasableDao<Family> {

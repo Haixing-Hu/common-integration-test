@@ -13,8 +13,9 @@ import java.time.Instant;
 import org.springframework.dao.DataAccessException;
 
 import ltd.qubit.commons.annotation.Modified;
-import ltd.qubit.commons.test.model.Deletable;
-import ltd.qubit.commons.test.model.Identifiable;
+import ltd.qubit.commons.error.DataNotExistException;
+import ltd.qubit.commons.test.dao.testbed.model.Deletable;
+import ltd.qubit.commons.test.dao.testbed.model.Identifiable;
 
 /**
  * 此接口表示实现删除实体操作的DAO。

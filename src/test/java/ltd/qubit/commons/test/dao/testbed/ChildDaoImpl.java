@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Child;
+import ltd.qubit.commons.test.dao.testbed.model.Child;
 
 public class ChildDaoImpl extends SimpleDaoImpl<Child> implements ChildDao {
 

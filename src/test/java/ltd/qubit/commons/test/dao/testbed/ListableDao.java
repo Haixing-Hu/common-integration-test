@@ -39,6 +39,18 @@ public interface ListableDao<T> {
   long count(@Nullable final Criterion<T> filter) throws DataAccessException;
 
   /**
+   * 检测是否存在符合条件的实体。
+   *
+   * @param filter
+   *     用于过滤实体的条件，如果为{@code null}则不做限制。
+   * @return
+   *     若存在符合条件的实体则返回{@code true}，否则返回{@code false}。
+   * @throws DataAccessException
+   *     若出现任何数据存取错误。
+   */
+  boolean existIf(@Nullable final Criterion<T> filter) throws DataAccessException;
+
+  /**
    * 列出符合条件的实体的指定子序列。
    *
    * @param filter

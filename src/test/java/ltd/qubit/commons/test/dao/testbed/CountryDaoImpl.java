@@ -13,7 +13,7 @@ import java.time.Instant;
 import org.springframework.dao.DataAccessException;
 
 import ltd.qubit.commons.error.DataNotExistException;
-import ltd.qubit.commons.test.model.Country;
+import ltd.qubit.commons.test.dao.testbed.model.Country;
 
 public class CountryDaoImpl extends DaoImplBase<Country> implements CountryDao {
 
@@ -51,7 +51,7 @@ public class CountryDaoImpl extends DaoImplBase<Country> implements CountryDao {
     final Country entity = nameMap.get(name);
     if (entity != null) {
       logger.debug("Get a {} by name {}: {}", modelInfo.getName(), name, entity);
-      return entity.clone();
+      return entity.cloneEx();
     } else {
       throw new DataNotExistException(modelInfo.getType(), "name", name);
     }

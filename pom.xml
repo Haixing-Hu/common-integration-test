@@ -23,35 +23,6 @@
   <name>Java集成测试用到的公共代码</name>
   <url>${project.home.url}/commons/${artifactId}</url>
 
-  <repositories>
-    <repository>
-      <id>njzhyl-releases</id>
-      <name>Nanjing Smart Medical Maven Release Repository</name>
-      <url>https://nexus.njzhyl.cn/repository/maven-releases/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>njzhyl-snapshots</id>
-      <name>Nanjing Smart Medical Maven Snapshot Repository</name>
-      <url>https://nexus.njzhyl.cn/repository/maven-snapshots/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-    </repository>
-  </repositories>
-
 	<dependencies>
     <dependency>
       <groupId>ltd.qubit</groupId>
@@ -79,6 +50,11 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
@@ -195,6 +171,12 @@
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis</artifactId>
       <scope>test</scope>
+    </dependency>
+    <!-- logging implementation for unit testing -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>     <!-- only need in unit test -->
     </dependency>
   </dependencies>
 </project>

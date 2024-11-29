@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Country;
-import ltd.qubit.commons.test.model.Province;
+import ltd.qubit.commons.test.dao.testbed.model.Country;
+import ltd.qubit.commons.test.dao.testbed.model.Province;
 
 import org.springframework.dao.DataAccessException;
 

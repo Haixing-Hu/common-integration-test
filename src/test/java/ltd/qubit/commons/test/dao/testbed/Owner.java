@@ -74,7 +74,7 @@ public class Owner implements Serializable, Assignable<Owner> {
   }
 
   @Override
-  public Owner clone() {
+  public Owner cloneEx() {
     return new Owner(this);
   }
 

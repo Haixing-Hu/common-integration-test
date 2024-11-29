@@ -24,8 +24,8 @@ import ltd.qubit.commons.lang.Assignable;
 import ltd.qubit.commons.lang.CloneableEx;
 import ltd.qubit.commons.reflect.BeanInfo;
 import ltd.qubit.commons.reflect.Property;
-import ltd.qubit.commons.test.model.Identifiable;
-import ltd.qubit.commons.test.model.WithInfo;
+import ltd.qubit.commons.test.dao.testbed.model.Identifiable;
+import ltd.qubit.commons.test.dao.testbed.model.WithInfo;
 import ltd.qubit.commons.util.clock.MockClock;
 
 import static ltd.qubit.commons.test.dao.DaoTestUtils.getColumnName;
@@ -55,7 +55,7 @@ public class SimpleDaoImpl<T extends Identifiable & WithInfo>
     final T entity = idMap.get(id);
     if (entity != null) {
       logger.debug("Get a {} by ID {}: {}", modelInfo.getName(), id, entity);
-      return ((CloneableEx<T>) entity).clone();
+      return ((CloneableEx<T>) entity).cloneEx();
     } else {
       throw new DataNotExistException(modelInfo.getType(), "id", id);
     }
@@ -72,7 +72,7 @@ public class SimpleDaoImpl<T extends Identifiable & WithInfo>
     final Instant createTime = clock.now();
     entity.setId(idGenerator.incrementAndGet());
     validateBeforeAdding(entity);
-    final T copy = ((CloneableEx<T>) entity).clone();
+    final T copy = ((CloneableEx<T>) entity).cloneEx();
     idMap.put(entity.getId(), copy);
     return createTime;
   }

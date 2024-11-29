@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +32,8 @@ public class CountOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
     builder.add(displayName, () -> {
       logger.info("Test {}: Count the empty table with a null criterion.",
           methodName);
+      logger.info("Clear all the {}s.", modelName);
+      daoInfo.clear();
       final Long count = (Long) methodInfo.invoke(true, null);
       assertNotNull(count, "Return value of " + methodName + " cannot be null.");
       assertEquals(0, count, "Calling " + methodName + " on an empty table with"
@@ -66,17 +67,11 @@ public class CountOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
         // 上述两个类的关系是常见的父子关系。在准备类B对象时，会先创建一个存在的A对象并将其加
         // 入数据库，而将A对象加入数据库时有可能会将A.child也加入数据库。这样在准备好B对象后，
         // 数据库中就会已经有一个B对象了。
-        final List<Object> models = new ArrayList<>();
-        for (int j = 0; j < n; ++j) {
-          final Object model = beanCreator.prepare(modelInfo);
-          models.add(model);
-        }
+        final List<T> models = beanCreator.prepare(n, modelInfo);
         // 通过 count 记录下目前数据库中已有的模型数量
         final Long existingCount = (Long) methodInfo.invoke(true, null);
         // 接下来把准备好的模型加入
-        for (final Object model : models) {
-          daoInfo.add(model);
-        }
+        daoInfo.addAll(models);
         // 计算出目前实际应该有的对象总数
         final long expectedCount = n + existingCount;
         // 再接下来再次 count 目前数据库中已有的模型数量
@@ -87,22 +82,23 @@ public class CountOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
             "Calling " + methodName + " on an non-empty table"
             + " with null criterion must return the exactly number of records "
             + "in the table.");
+        daoInfo.clear();
       }
     });
   }
 
-  private void countEmptyTableWithNonNullCriterion(final DaoDynamicTestBuilder builder) {
-    final String displayName = getDisplayName("Empty table with null criterion");
-    final int loops = parameters.getLoops();
-    builder.add(displayName, () -> {
-      for (int i = 0; i < loops; ++i) {
-        logger.info("Test {}: Count the empty table with a non-null criterion: "
-                + "{} of {}", methodName, i + 1, loops);
-        final Long count = (Long) methodInfo.invokeWithArguments(true, null);
-        assertNotNull(count, "Return value of " + methodName + " cannot be null.");
-        assertEquals(0, count, "Calling " + methodName + " on an empty table "
-            + "with non-null criterion must return 0.");
-      }
-    });
-  }
+  // private void countEmptyTableWithNonNullCriterion(final DaoDynamicTestBuilder builder) {
+  //   final String displayName = getDisplayName("Empty table with null criterion");
+  //   final int loops = parameters.getLoops();
+  //   builder.add(displayName, () -> {
+  //     for (int i = 0; i < loops; ++i) {
+  //       logger.info("Test {}: Count the empty table with a non-null criterion: "
+  //               + "{} of {}", methodName, i + 1, loops);
+  //       final Long count = (Long) methodInfo.invokeWithArguments(true, null);
+  //       assertNotNull(count, "Return value of " + methodName + " cannot be null.");
+  //       assertEquals(0, count, "Calling " + methodName + " on an empty table "
+  //           + "with non-null criterion must return 0.");
+  //     }
+  //   });
+  // }
 }

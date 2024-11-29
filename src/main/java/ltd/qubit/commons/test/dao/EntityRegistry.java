@@ -8,12 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import java.util.HashMap;
-
-import javax.annotation.Nullable;
-
 import ltd.qubit.commons.lang.Hash;
 import ltd.qubit.commons.reflect.Property;
+
+import java.util.HashMap;
+import javax.annotation.Nullable;
 
 import static java.lang.System.identityHashCode;
 

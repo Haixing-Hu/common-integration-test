@@ -8,9 +8,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import ltd.qubit.commons.test.TestGenerator;
@@ -20,12 +23,12 @@ import ltd.qubit.commons.test.dao.testbed.CountryDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.DistrictDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.ProvinceDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.StreetDaoImpl;
-import ltd.qubit.commons.test.model.Category;
-import ltd.qubit.commons.test.model.City;
-import ltd.qubit.commons.test.model.Country;
-import ltd.qubit.commons.test.model.District;
-import ltd.qubit.commons.test.model.Province;
-import ltd.qubit.commons.test.model.Street;
+import ltd.qubit.commons.test.dao.testbed.model.Category;
+import ltd.qubit.commons.test.dao.testbed.model.City;
+import ltd.qubit.commons.test.dao.testbed.model.Country;
+import ltd.qubit.commons.test.dao.testbed.model.District;
+import ltd.qubit.commons.test.dao.testbed.model.Province;
+import ltd.qubit.commons.test.dao.testbed.model.Street;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -300,5 +303,12 @@ public class DaoTestGeneratorRegistryTest {
     assertNotNull(generator);
     assertSame(registry.getRandom(), generator.getRandom());
     return generator.generate();
+  }
+
+  @Test
+  public void compareMethodNames() {
+    final List<String> values = new ArrayList<>(List.of("getByCode", "get", "getByCodeElseNull"));
+    Collections.sort(values);
+    System.out.println(values);
   }
 }

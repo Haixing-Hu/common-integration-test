@@ -44,7 +44,8 @@ public class AddOrUpdateOperationTestGenerator<T>
     }
     if (this.updateMethodInfo == null) {
       throw new IllegalArgumentException("No update"
-          + (identifier == null ? "()" : "By" + capitalize(identifier.getName()))
+          + (identifier == null ? "()" : "By" + capitalize(
+          identifier.getName()))
           + " method found for the DAO " + daoInfo.getDaoType().getName());
     }
   }
@@ -179,7 +180,7 @@ public class AddOrUpdateOperationTestGenerator<T>
           logger.info("Test {}: Add or update a {} with a duplicated {} by "
               + "a non-existing {}", methodName, modelName, prop.getName(),
               identifierName);
-          final Object newModel = beanCreator.prepare(modelInfo, identifier);
+          final Object newModel = beanCreator.prepare(modelInfo, prop);
           final String duplicatedValue = setUniquePropertyValues(modelInfo,
               prop, existingModel, newModel);
           final DuplicateKeyException e = assertThrows(DuplicateKeyException.class,
@@ -248,7 +249,8 @@ public class AddOrUpdateOperationTestGenerator<T>
   }
 
   private void updateModelWithNullField(final DaoDynamicTestBuilder builder) {
-    final List<Property> respectTo = modelInfo.getRespectToProperties(identifier);
+    final List<Property> respectTo = modelInfo.getRespectToProperties(
+        identifier);
     for (final Property prop : modelInfo.getProperties()) {
       if (prop.equals(identifier)) {
         continue;  // should not set the identifier to null
@@ -327,7 +329,7 @@ public class AddOrUpdateOperationTestGenerator<T>
         final String displayName = getDisplayName("Existing " + modelName
             + " with a duplicated " + prop.getName());
         builder.add(displayName, () -> {
-          final Object existingModel = beanCreator.prepare(modelInfo, prop);
+          final Object existingModel = beanCreator.prepare(modelInfo, identifier, prop);
           daoInfo.add(existingModel); // dao.add(model)
           logger.debug("Test {}: Add a normal {} as existing model: {}",
               methodName, modelName, existingModel);
@@ -339,7 +341,7 @@ public class AddOrUpdateOperationTestGenerator<T>
           // oldModel.id = 2, oldModel.entity = 'e', oldModel.name = 'y';
           // newModel.id = 2, newModel.entity = 'e', newModel.name = 'x';
           // 上面这样的三组数据才能进行期望的 duplicated key 异常测试
-          final Object oldModel = beanCreator.prepare(modelInfo, identifier);
+          final Object oldModel = beanCreator.prepare(modelInfo, identifier, prop);
           // 注意需要通过update方法来复制未被修改的属性
           setUnmodifiedRespectToProperties(updateMethodInfo, prop, existingModel, oldModel);
           daoInfo.add(oldModel);

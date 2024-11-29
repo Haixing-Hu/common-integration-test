@@ -8,19 +8,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import java.util.Arrays;
+import ltd.qubit.commons.reflect.BeanInfo;
+import ltd.qubit.commons.reflect.Property;
+import ltd.qubit.commons.test.dao.testbed.model.Address;
+import ltd.qubit.commons.test.dao.testbed.model.Child;
+import ltd.qubit.commons.test.dao.testbed.model.Country;
+import ltd.qubit.commons.test.dao.testbed.model.Family;
+import ltd.qubit.commons.test.dao.testbed.model.Grandpa;
+import ltd.qubit.commons.test.dao.testbed.model.Parent;
+import ltd.qubit.commons.test.dao.testbed.model.Province;
 
 import org.junit.jupiter.api.Test;
 
-import ltd.qubit.commons.reflect.BeanInfo;
-import ltd.qubit.commons.reflect.Property;
-import ltd.qubit.commons.test.model.Address;
-import ltd.qubit.commons.test.model.Child;
-import ltd.qubit.commons.test.model.Country;
-import ltd.qubit.commons.test.model.Family;
-import ltd.qubit.commons.test.model.Grandpa;
-import ltd.qubit.commons.test.model.Parent;
-import ltd.qubit.commons.test.model.Province;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

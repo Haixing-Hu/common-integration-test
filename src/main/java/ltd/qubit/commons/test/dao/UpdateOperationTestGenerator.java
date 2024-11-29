@@ -9,6 +9,7 @@
 package ltd.qubit.commons.test.dao;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -53,11 +54,22 @@ public class UpdateOperationTestGenerator<T> extends DaoOperationTestGenerator<T
   private Object doUpdate(final boolean logging, @Nullable final Object oldModel,
       final Object newModel) throws Throwable {
     if (target == null) {
+      logger.debug("Updating a {} by {}: {}", modelName, identifierName, newModel);
       // dao.update(newModel), dao.updateByYxx(newModel)
       return methodInfo.invoke(logging, newModel);
     } else {
-      final Object[] params = getRespectToParams(newModel, modelInfo, identifier, methodInfo);
-      final Object newValue = target.getValue(newModel);
+      final Object[] params = getRespectToParams(newModel, modelInfo,
+          identifier, methodInfo);
+      Object newValue = target.getValue(newModel);
+      // 我们需要处理一种特殊情况：target就是modifyTime，而newModel.modifyTime == null,
+      // 于是会造成 newValue == null，即 updateModifyTimeByXxx()会把modifyTime修改为
+      // null，于是调用 updateModifyTimeByXxx() 的返回值也是null
+      if (target.getName().equals("modifyTime") && newValue == null) {
+        // 注意，modifyTime必须是 java.time.Instant 对象并且精度到秒
+        newValue = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+      }
+      logger.debug("Updating the {} of a {} by {}: {}, {}", target.getName(),
+          modelName, identifierName, params, newValue);
       // dao.updateXxxByYyy(id, newValue)
       final Object modifyTime = methodInfo.invokeWithArguments(logging,
           ArrayUtils.add(params, newValue));
@@ -102,6 +114,7 @@ public class UpdateOperationTestGenerator<T> extends DaoOperationTestGenerator<T
 
   private Object addNormalModelImpl() throws Throwable {
     final Object model = beanCreator.prepare(modelInfo, identifier);
+    logger.debug("Adding a normal {} to the database: {}", modelName, model);
     daoInfo.add(model); // dao.add(model)
     final Object id = modelInfo.getId(model);
     final Object actual = daoInfo.get(id); // dao.get(id)
@@ -132,8 +145,7 @@ public class UpdateOperationTestGenerator<T> extends DaoOperationTestGenerator<T
     final String displayName = getDisplayName("Deleted " + modelName);
     builder.add(displayName, () -> {
       logger.info("Test {}: Update a deleted {}", methodName, modelName);
-      final Object oldModel = beanCreator.prepare(modelInfo, identifier);
-      daoInfo.add(oldModel);
+      final Object oldModel = addNormalModelImpl();
       final Object id = modelInfo.getId(oldModel);
       daoInfo.delete(id);
       final Object newModel = beanCreator.prepare(modelInfo);
@@ -146,7 +158,8 @@ public class UpdateOperationTestGenerator<T> extends DaoOperationTestGenerator<T
   }
 
   private void updateModelWithNullField(final DaoDynamicTestBuilder builder) {
-    final List<Property> respectTo = modelInfo.getRespectToProperties(identifier);
+    final List<Property> respectTo = modelInfo.getRespectToProperties(
+        identifier);
     for (final Property prop : modelInfo.getProperties()) {
       if (prop.equals(identifier)) {
         continue;  // should not set the identifier to null
@@ -219,7 +232,7 @@ public class UpdateOperationTestGenerator<T> extends DaoOperationTestGenerator<T
         final String displayName = getDisplayName(modelName
             + " with a duplicated " + prop.getName());
         builder.add(displayName, () -> {
-          final Object existingModel = beanCreator.prepare(modelInfo, prop);
+          final Object existingModel = beanCreator.prepare(modelInfo, identifier, prop);
           daoInfo.add(existingModel); // dao.add(model)
           logger.debug("Test {}: Add a normal {} as existing model: {}",
               methodName, modelName, existingModel);
@@ -231,7 +244,7 @@ public class UpdateOperationTestGenerator<T> extends DaoOperationTestGenerator<T
           // oldModel.id = 2, oldModel.entity = 'e', oldModel.name = 'y';
           // newModel.id = 2, newModel.entity = 'e', newModel.name = 'x';
           // 上面这样的三组数据才能进行期望的 duplicated key 异常测试
-          final Object oldModel = beanCreator.prepare(modelInfo);
+          final Object oldModel = beanCreator.prepare(modelInfo, identifier, prop);
           setUnmodifiedRespectToProperties(methodInfo, prop, existingModel, oldModel);
           daoInfo.add(oldModel);
           logger.debug("Test {}: Add a normal {} as old model: {}",

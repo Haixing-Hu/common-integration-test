@@ -8,16 +8,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import java.util.ArrayList;
+import java.util.List;
 
 import static ltd.qubit.commons.lang.Argument.requireNonNull;
+
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
  * A class helps to build list of dynamic tests for DAOs.

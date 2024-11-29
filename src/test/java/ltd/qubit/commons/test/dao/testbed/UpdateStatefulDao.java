@@ -8,14 +8,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import java.time.Instant;
+import ltd.qubit.commons.annotation.Modified;
+import ltd.qubit.commons.test.dao.testbed.model.Identifiable;
+import ltd.qubit.commons.test.dao.testbed.model.State;
+import ltd.qubit.commons.test.dao.testbed.model.Stateful;
 
 import org.springframework.dao.DataAccessException;
 
-import ltd.qubit.commons.annotation.Modified;
-import ltd.qubit.commons.test.model.Identifiable;
-import ltd.qubit.commons.test.model.State;
-import ltd.qubit.commons.test.model.Stateful;
+import java.time.Instant;
 
 /**
  * 此接口表示对有状态的实体类实现了更新状态操作的DAO。

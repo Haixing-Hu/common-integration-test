@@ -34,11 +34,11 @@ import ltd.qubit.commons.reflect.BeanInfo;
 import ltd.qubit.commons.reflect.Property;
 import ltd.qubit.commons.sql.Criterion;
 import ltd.qubit.commons.sql.SortRequest;
-import ltd.qubit.commons.test.model.Creatable;
-import ltd.qubit.commons.test.model.Deletable;
-import ltd.qubit.commons.test.model.Info;
-import ltd.qubit.commons.test.model.Modifiable;
-import ltd.qubit.commons.test.model.WithInfo;
+import ltd.qubit.commons.test.dao.testbed.model.Creatable;
+import ltd.qubit.commons.test.dao.testbed.model.Deletable;
+import ltd.qubit.commons.test.dao.testbed.model.Info;
+import ltd.qubit.commons.test.dao.testbed.model.Modifiable;
+import ltd.qubit.commons.test.dao.testbed.model.WithInfo;
 import ltd.qubit.commons.util.clock.MockClock;
 
 import static ltd.qubit.commons.test.dao.DaoTestUtils.fixMySqlValueLength;
@@ -78,6 +78,18 @@ public abstract class DaoImplBase<T extends WithInfo & Creatable & Modifiable & 
     }
   }
 
+  @Override
+  public boolean existIf(@Nullable final Criterion<T> filter)
+      throws DataAccessException {
+    logger.debug("Count the number of specified {}: filter = {}",
+        modelInfo.getName(), filter);
+    if (filter == null) {
+      return idMap.size() > 0;
+    } else {
+      return idMap.values().stream().anyMatch(filter::accept);
+    }
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public List<T> list(@Nullable final Criterion<T> filter,
@@ -94,21 +106,21 @@ public abstract class DaoImplBase<T extends WithInfo & Creatable & Modifiable & 
         result = idMap.values()
             .stream()
             .sorted(sortRequest.getComparator())
-            .map((e) -> ((CloneableEx<T>) e).clone())
+            .map((e) -> ((CloneableEx<T>) e).cloneEx())
             .collect(Collectors.toList());
       }
     } else if (sortRequest == null) {
       result = idMap.values()
           .stream()
           .filter(filter::accept)
-          .map((e) -> ((CloneableEx<T>) e).clone())
+          .map((e) -> ((CloneableEx<T>) e).cloneEx())
           .collect(Collectors.toList());
     } else {
       result = idMap.values()
           .stream()
           .filter(filter::accept)
           .sorted(sortRequest.getComparator())
-          .map((e) -> ((CloneableEx<T>) e).clone())
+          .map((e) -> ((CloneableEx<T>) e).cloneEx())
           .collect(Collectors.toList());
     }
     final int fromIndex = (offset == null ? 0 : offset.intValue());
@@ -141,7 +153,7 @@ public abstract class DaoImplBase<T extends WithInfo & Creatable & Modifiable & 
     final T entity = idMap.get(id);
     if (entity != null) {
       logger.debug("Get a {} by ID {}: {}", modelInfo.getName(), id, entity);
-      return ((CloneableEx<T>) entity).clone();
+      return ((CloneableEx<T>) entity).cloneEx();
     } else {
       throw new DataNotExistException(modelInfo.getType(), "id", id);
     }
@@ -161,7 +173,7 @@ public abstract class DaoImplBase<T extends WithInfo & Creatable & Modifiable & 
     if (entity != null) {
       logger.debug("Get a {} by code {}: {}",
           modelInfo.getName(), code, entity);
-      return ((CloneableEx<T>) entity).clone();
+      return ((CloneableEx<T>) entity).cloneEx();
     } else {
       throw new DataNotExistException(modelInfo.getType(), "code", code);
     }
@@ -208,7 +220,7 @@ public abstract class DaoImplBase<T extends WithInfo & Creatable & Modifiable & 
     entity.setDeleteTime(null);
     validateBeforeAdding(entity);
     @SuppressWarnings("unchecked")
-    final T copy = ((CloneableEx<T>) entity).clone();
+    final T copy = ((CloneableEx<T>) entity).cloneEx();
     idMap.put(entity.getId(), copy);
     codeMap.put(entity.getCode(), copy);
     nameMap.put(makeNameKey(entity), copy);

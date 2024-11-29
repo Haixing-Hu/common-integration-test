@@ -8,13 +8,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Info;
-import ltd.qubit.commons.test.model.Street;
-
 import javax.annotation.Nullable;
 
-public class StreetDaoImpl extends DaoImplBase<Street>
-    implements StreetDao {
+import ltd.qubit.commons.test.dao.testbed.model.Info;
+import ltd.qubit.commons.test.dao.testbed.model.Street;
+
+public class StreetDaoImpl extends DaoImplBase<Street> implements StreetDao {
 
   public StreetDaoImpl() {
     super(Street.class);

@@ -61,7 +61,7 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
     assertNotNull(id, "The ID of the added object must not be null.");
     if (modelInfo.hasProperty("createTime")) {
       assertEquals(createTime, modelInfo.get(model, "createTime"), "The "
-          + methodName + "must return the createTime of the added "
+          + methodName + " must return the createTime of the added "
           + modelName + ".");
     }
     if (modelInfo.hasProperty("modifyTime")) {
@@ -85,17 +85,17 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
           && (!prop.isComputed())
           && (!prop.isPrimitive())
           && methodInfo.isUnmodified(prop)) {
-        final String displayName = getDisplayName(modelName + " with a null " + prop.getName());
+        final String displayName = getDisplayName(modelName + " with a null `" + prop.getName() + "`");
         builder.add(displayName, () -> {
-          logger.info("Test {}: Add a {} with a null {}", methodName, modelName,
+          logger.info("Test {}: Add a {} with a null `{}`", methodName, modelName,
               prop.getName());
           final Object model = beanCreator.prepare(modelInfo);
           prop.setValue(model, null);
           final NullFieldException e = assertThrows(NullFieldException.class,
               () -> methodInfo.invoke(false, model), // dao.add(model)
               "Adding a " + modelName
-              + " with a null " + prop.getName()
-              + " must throw a NullFieldException.");
+              + " with a null `" + prop.getName()
+              + "` must throw a NullFieldException.");
           checkException(e, prop);
         });
       }
@@ -112,9 +112,9 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
           && methodInfo.isUnmodified(prop)) {
         final int maxSize = prop.getSizeRange().getMax();
         final String displayName = getDisplayName(modelName
-            + " with a very long " + prop.getName());
+            + " with a very long `" + prop.getName() + "`");
         builder.add(displayName, () -> {
-          logger.info("Test {}: Add a {} with a very long {}", methodName, modelName,
+          logger.info("Test {}: Add a {} with a very long `{}`", methodName, modelName,
               prop.getName());
           final Object model = beanCreator.prepare(modelInfo);
           final String longValue = random.nextLetterString(maxSize + 1);
@@ -122,8 +122,8 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
           final FieldTooLongException e = assertThrows(FieldTooLongException.class,
               () -> methodInfo.invoke(false, model), // dao.add(model)
               "Adding a " + modelName
-              + " with a very long " + prop.getName()
-              + " must throw a FieldTooLongException.");
+              + " with a very long `" + prop.getName()
+              + "` must throw a FieldTooLongException.");
           checkException(e, prop);
         });
       }
@@ -137,21 +137,21 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
           && (!prop.isComputed())
           && methodInfo.isUnmodified(prop)) {
         final String displayName = getDisplayName(modelName
-            + " with a duplicated " + prop.getName());
+            + " with a duplicated `" + prop.getName() + "`");
         builder.add(displayName, () -> {
           logger.info("Test {}: Add a normal {}", methodName, modelName);
           final Object existingModel = beanCreator.prepare(modelInfo, prop);
           methodInfo.invoke(true, existingModel); // dao.add(existingModel);
-          logger.info("Test {}: Add a {} with a duplicated {}", methodName,
+          logger.info("Test {}: Add a {} with a duplicated `{}`", methodName,
               modelName, prop.getName());
-          final Object newModel = beanCreator.prepare(modelInfo);
+          final Object newModel = beanCreator.prepare(modelInfo, prop);
           final String duplicatedValue = setUniquePropertyValues(modelInfo,
               prop, existingModel, newModel);
           final DuplicateKeyException e = assertThrows(DuplicateKeyException.class,
               () -> methodInfo.invoke(false, newModel),  // dao.add(model)
               "Adding a " + modelName
-              + " with a duplicated " + prop.getName()
-              + " must throw a DuplicateKeyException.");
+              + " with a duplicated `" + prop.getName()
+              + "` must throw a DuplicateKeyException.");
           checkException(e, prop, duplicatedValue);
         });
       }

@@ -10,6 +10,7 @@ package ltd.qubit.commons.test.dao;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -44,6 +45,7 @@ public class DaoInfo {
   private final DaoMethodInfo exist;
   private final DaoMethodInfo add;
   private final DaoMethodInfo update;
+  private final DaoMethodInfo list;
   private final DaoMethodInfo get;
   private final DaoMethodInfo delete;
   private final DaoMethodInfo erase;
@@ -51,7 +53,7 @@ public class DaoInfo {
   private final DaoMethodInfo count;
 
   public DaoInfo(final Class<?> modelType, final Object dao) {
-    LOGGER.info("Creating a DaoInfo for {}", modelType.getName());
+    LOGGER.debug("Creating a DaoInfo for {}", modelType.getName());
     this.modelType = requireNonNull("modelType", modelType);
     this.modelInfo = BeanInfo.of(modelType);
     this.dao = requireNonNull("dao", dao);
@@ -62,6 +64,7 @@ public class DaoInfo {
     DaoMethodInfo existMethod = null;
     DaoMethodInfo addMethod = null;
     DaoMethodInfo updateMethod = null;
+    DaoMethodInfo listMethod = null;
     DaoMethodInfo getMethod = null;
     DaoMethodInfo deleteMethod = null;
     DaoMethodInfo eraseMethod = null;
@@ -79,9 +82,16 @@ public class DaoInfo {
               existMethod = info;
             }
             break;
+          case LIST:
+            if (info.getTarget() == null) {
+              listMethod = info;
+            }
+            break;
           case GET:
             if ((info.getTarget() == null)
-                && nullOrEquals(info.getIdentifier(), idProperty)) {
+                && nullOrEquals(info.getIdentifier(), idProperty)
+                // 注意我们把 getElseNull() 的 operation 修改为了GET
+                && (!info.getName().endsWith("ElseNull"))) {
               getMethod = info;
             }
             break;
@@ -122,6 +132,7 @@ public class DaoInfo {
       }
     }
     this.exist = existMethod;
+    this.list = listMethod;
     this.get = getMethod;
     this.add = addMethod;
     this.update = updateMethod;
@@ -130,8 +141,7 @@ public class DaoInfo {
     this.clear = clearMethod;
     this.count = countMethod;
     if (addMethod == null) {
-      throw new IllegalArgumentException("No add() method for the DAO "
-          + daoType.getSimpleName());
+      throw new IllegalArgumentException("No add() method for the DAO " + daoType.getSimpleName());
     }
   }
 
@@ -227,6 +237,23 @@ public class DaoInfo {
       throw new IllegalArgumentException("No add method for the DAO " + getName());
     }
     add.invoke(true, model);
+  }
+
+  public final void addAll(final List<?> models) throws Throwable {
+    if (add == null) {
+      throw new IllegalArgumentException("No add method for the DAO " + getName());
+    }
+    for (final Object model : models) {
+      add.invoke(true, model);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public final <T> List<T> listAll() throws Throwable {
+    if (list == null) {
+      throw new IllegalArgumentException("No list method for the DAO " + getName());
+    }
+    return (List<T>) list.invoke(true, null, null, null, null);
   }
 
   public Object get(final Object id) throws Throwable {

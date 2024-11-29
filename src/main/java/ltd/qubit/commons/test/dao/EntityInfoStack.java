@@ -118,6 +118,7 @@ public class EntityInfoStack {
       // 说明这个父对象并非该引用属性指定的父对象，因此只能将该引用属性的路径加入到stack的
       // 顶层（即当前实体对象）的 referencedProperties中，在后面处理该引用属性时，会创
       // 建一个新的实体对象并加入数据库，作为该属性的引用实体对象。
+      assert !stack.isEmpty();
       info = stack.peek();
       info.getReferencedProperties()
           .add(new ReferencedProperty(property));

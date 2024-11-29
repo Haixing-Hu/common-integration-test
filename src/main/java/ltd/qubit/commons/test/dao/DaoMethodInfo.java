@@ -38,6 +38,7 @@ import static ltd.qubit.commons.lang.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static ltd.qubit.commons.lang.StringUtils.isEmpty;
 import static ltd.qubit.commons.lang.StringUtils.lowerCaseFirstChar;
 import static ltd.qubit.commons.reflect.MethodUtils.getMethodUri;
+import static ltd.qubit.commons.test.dao.DaoOperation.GET;
 
 /**
  * Stores the information about a method of a DAO.
@@ -97,7 +98,7 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
     }
     final ParsedResult result = parseMethodInfo(modelInfo, daoType, method);
     if (result == null) {
-      LOGGER.warn("The non-standard DAO method {}.{} cannot be automatically tested.",
+      LOGGER.debug("The non-standard DAO method {}.{} cannot be automatically tested.",
           daoType.getSimpleName(), method.getName());
       return null;
     } else {
@@ -161,7 +162,11 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
       case ERASE:
         return new ParsedResult(operation, second,
             (first == null ? modelInfo.getIdProperty() : first));
-      case GET_OR_NULL:
+      case GET_ELSE_NULL:
+        // 特别处理：为了让 Dao.getXxxByYyy()和 Dao.getXxxByYyyElseNull() 方法测试时
+        // 排在相邻的位置，我们特殊处理下 GET_ELSE_NULL 操作，将其操作改为 GET
+        return new ParsedResult(GET, first,
+            (second == null ? modelInfo.getIdProperty() : second));
       case GET:
       case UPDATE:
       case ADD_OR_UPDATE:
@@ -185,19 +190,19 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
     this.operation = info.operation;
     this.target = info.target;
     this.identifier = info.identifier;
-    this.allowNullReturn = (info.operation.name().endsWith("_OR_NULL"));
+    this.allowNullReturn = (method.getName().endsWith("ElseNull"));
     this.modifiedProperties = new HashSet<>();
     this.unmodifiedProperties = new HashSet<>();
     this.modifiedPropertyNames = new HashSet<>();
     this.unmodifiedPropertyNames = new HashSet<>();
     this.setModifiedUnmodifiedProperties(method);
-    if (LOGGER.isInfoEnabled()) {
+    if (LOGGER.isDebugEnabled()) {
       switch (this.operation) {
         case UPDATE:
         case ADD_OR_UPDATE:
         case DELETE:
         case RESTORE:
-          LOGGER.info("Successfully parsed the information of {}: operation = {}, "
+          LOGGER.debug("Successfully parsed the information of {}: operation = {}, "
                   + "target = {}, identifier = {}, modified = {}",
               this.qualifiedName, this.operation,
               (this.target == null ? "null" : this.target.getName()),
@@ -205,7 +210,7 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
               this.modifiedPropertyNames);
           break;
         default:
-          LOGGER.info("Successfully parsed the information of {}: operation = {}, "
+          LOGGER.debug("Successfully parsed the information of {}: operation = {}, "
                   + "target = {}, identifier = {}",
               this.qualifiedName, this.operation,
               (this.target == null ? "null" : this.target.getName()),
@@ -443,7 +448,7 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
       return false;
     }
     final String[] respectTo = property.getUniqueRespectTo();
-    if (respectTo != null && respectTo.length > 0) {
+    if (respectTo != null) {
       for (final String p : respectTo) {
         final Property prop = modelInfo.getProperty(p);
         if (prop == null) {
@@ -513,6 +518,7 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
         .compare();
   }
 
+  @Override
   public boolean equals(@Nullable final Object o) {
     if (this == o) {
       return true;
@@ -538,6 +544,7 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
         && Equality.equals(unmodifiedPropertyNames, other.unmodifiedPropertyNames);
   }
 
+  @Override
   public int hashCode() {
     final int multiplier = 7;
     int result = 3;
@@ -559,6 +566,7 @@ public class DaoMethodInfo implements Comparable<DaoMethodInfo> {
     return result;
   }
 
+  @Override
   public String toString() {
     return new ToStringBuilder(this)
         .append("modelInfo", modelInfo)

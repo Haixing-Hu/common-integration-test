@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
+
 public class PurgeOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
 
   public PurgeOperationTestGenerator(final DaoTestGeneratorRegistry registry,
@@ -79,7 +81,7 @@ public class PurgeOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
       final Object id = identifier.getValue(model);
       return methodInfo.invoke(logging, id);     // dao.purge(id) or dao.purgeByXxx(id)
     } else {
-      final Object[] params = DaoTestUtils.getRespectToParams(model, modelInfo, identifier, methodInfo);
+      final Object[] params = getRespectToParams(model, modelInfo, identifier, methodInfo);
       return methodInfo.invokeWithArguments(logging, params); // dao.purgeByXxx(key1, key2, ..., id)
     }
   }

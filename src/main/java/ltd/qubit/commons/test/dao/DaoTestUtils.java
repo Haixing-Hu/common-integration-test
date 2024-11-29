@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import ltd.qubit.commons.annotation.TypeCodec;
 import ltd.qubit.commons.lang.ArrayUtils;
+import ltd.qubit.commons.lang.ClassUtils;
 import ltd.qubit.commons.lang.Comparison;
 import ltd.qubit.commons.lang.StringUtils;
 import ltd.qubit.commons.random.EasyRandom;
 import ltd.qubit.commons.reflect.BeanInfo;
-import ltd.qubit.commons.reflect.ClassUtils;
 import ltd.qubit.commons.reflect.ConstructorUtils;
 import ltd.qubit.commons.reflect.MethodByNameComparator;
 import ltd.qubit.commons.reflect.MethodUtils;
@@ -36,14 +36,17 @@ import ltd.qubit.commons.sql.Criterion;
 import ltd.qubit.commons.sql.SimpleCriterion;
 import ltd.qubit.commons.util.codec.Codec;
 import ltd.qubit.commons.util.codec.EncodingException;
+import ltd.qubit.commons.util.range.CloseRange;
 
 import static java.lang.Boolean.FALSE;
 
+import static ltd.qubit.commons.lang.ObjectUtils.defaultIfNull;
 import static ltd.qubit.commons.lang.StringUtils.substring;
 import static ltd.qubit.commons.reflect.MethodUtils.getMatchingMethod;
 import static ltd.qubit.commons.reflect.MethodUtils.hasMethod;
 import static ltd.qubit.commons.reflect.MethodUtils.invokeMethod;
 import static ltd.qubit.commons.sql.impl.CriterionImplUtils.isSupportedNonArrayDataType;
+import static ltd.qubit.commons.test.dao.BeanCreator.DEFAULT_SIZE_RANGE;
 import static ltd.qubit.commons.text.CaseFormat.LOWER_CAMEL;
 import static ltd.qubit.commons.text.CaseFormat.LOWER_UNDERSCORE;
 import static ltd.qubit.commons.text.CaseFormat.UPPER_CAMEL;
@@ -435,4 +438,14 @@ public class DaoTestUtils {
     }
   }
 
+  public static CloseRange<Integer> getActualSizeRange(final Property property) {
+    final CloseRange<Integer> range = defaultIfNull(property.getSizeRange(), DEFAULT_SIZE_RANGE);
+    if (range.getMin() == null) {
+      range.setMin(DEFAULT_SIZE_RANGE.getMin());
+    }
+    if (range.getMax() == null) {
+      range.setMax(DEFAULT_SIZE_RANGE.getMax());
+    }
+    return range;
+  }
 }

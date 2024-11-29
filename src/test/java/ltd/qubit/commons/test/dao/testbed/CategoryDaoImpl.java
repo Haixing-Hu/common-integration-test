@@ -11,8 +11,8 @@ package ltd.qubit.commons.test.dao.testbed;
 import org.springframework.dao.DataAccessException;
 
 import ltd.qubit.commons.error.DataNotExistException;
-import ltd.qubit.commons.test.model.Category;
-import ltd.qubit.commons.test.model.InfoWithEntity;
+import ltd.qubit.commons.test.dao.testbed.model.Category;
+import ltd.qubit.commons.test.dao.testbed.model.InfoWithEntity;
 
 public class CategoryDaoImpl extends DaoImplBase<Category> implements CategoryDao {
 
@@ -49,7 +49,7 @@ public class CategoryDaoImpl extends DaoImplBase<Category> implements CategoryDa
     final Category category = nameMap.get(makeNameKey(entity, name));
     if (category != null) {
       logger.debug("Get a {} by name {}: {}", modelInfo.getName(), name, entity);
-      return category.clone();
+      return category.cloneEx();
     } else {
       throw new DataNotExistException(modelInfo.getType(), "name", name);
     }

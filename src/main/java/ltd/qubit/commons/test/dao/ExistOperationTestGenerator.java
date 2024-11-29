@@ -8,6 +8,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
+import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,7 +68,7 @@ public class ExistOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
       final Object id = identifier.getValue(model);
       return methodInfo.invoke(true, id);     // dao.existXxx(id)
     } else {
-      final Object[] params = DaoTestUtils.getRespectToParams(model, modelInfo, identifier, methodInfo);
+      final Object[] params = getRespectToParams(model, modelInfo, identifier, methodInfo);
       return methodInfo.invokeWithArguments(true, params); // dao.existXxx(key1, key2, ..., id)
     }
   }

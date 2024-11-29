@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static ltd.qubit.commons.test.dao.DaoTestUtils.getRespectToParams;
+
 public class RestoreOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
 
   public RestoreOperationTestGenerator(final DaoTestGeneratorRegistry registry,
@@ -71,7 +73,7 @@ public class RestoreOperationTestGenerator<T> extends DaoOperationTestGenerator<
       // dao.restore(id) or dao.restoreByXxx(id)
       return methodInfo.invoke(logging, id);
     } else {
-      final Object[] params = DaoTestUtils.getRespectToParams(model, modelInfo, identifier, methodInfo);
+      final Object[] params = getRespectToParams(model, modelInfo, identifier, methodInfo);
       // dao.restoreByXxx(key1, key2, ..., id)
       return methodInfo.invokeWithArguments(logging, params);
     }

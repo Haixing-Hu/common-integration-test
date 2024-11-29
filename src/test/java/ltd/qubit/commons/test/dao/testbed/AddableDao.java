@@ -9,12 +9,12 @@
 
 package ltd.qubit.commons.test.dao.testbed;
 
-import java.time.Instant;
+import ltd.qubit.commons.annotation.Modified;
+import ltd.qubit.commons.test.dao.testbed.model.Identifiable;
 
 import org.springframework.dao.DataAccessException;
 
-import ltd.qubit.commons.annotation.Modified;
-import ltd.qubit.commons.test.model.Identifiable;
+import java.time.Instant;
 
 /**
  * 此接口表示实现添加实体操作的DAO。

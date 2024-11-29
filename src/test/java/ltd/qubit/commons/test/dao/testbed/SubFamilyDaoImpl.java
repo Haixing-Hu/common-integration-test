@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.SubFamily;
+import ltd.qubit.commons.test.dao.testbed.model.SubFamily;
 
 public class SubFamilyDaoImpl extends SimpleDaoImpl<SubFamily> implements SubFamilyDao {
 

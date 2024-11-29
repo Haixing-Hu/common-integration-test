@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 import org.springframework.dao.DataAccessException;
 
 import ltd.qubit.commons.error.DataNotExistException;
-import ltd.qubit.commons.test.model.Info;
-import ltd.qubit.commons.test.model.Province;
+import ltd.qubit.commons.test.dao.testbed.model.Info;
+import ltd.qubit.commons.test.dao.testbed.model.Province;
 
 public class ProvinceDaoImpl extends DaoImplBase<Province>
     implements ProvinceDao {
@@ -65,7 +65,7 @@ public class ProvinceDaoImpl extends DaoImplBase<Province>
     if (province != null) {
       logger.debug("Get a province by name {}: {} - {}", countryCode, name,
           province);
-      return province.clone();
+      return province.cloneEx();
     } else {
       throw new DataNotExistException(Province.class, "name", name);
     }

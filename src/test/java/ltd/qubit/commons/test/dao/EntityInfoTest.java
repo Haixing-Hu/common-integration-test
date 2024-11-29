@@ -8,14 +8,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao;
 
-import java.util.Arrays;
-import java.util.List;
+import ltd.qubit.commons.reflect.BeanInfo;
+import ltd.qubit.commons.reflect.Property;
+import ltd.qubit.commons.test.dao.testbed.model.Address;
 
 import org.junit.jupiter.api.Test;
 
-import ltd.qubit.commons.reflect.BeanInfo;
-import ltd.qubit.commons.reflect.Property;
-import ltd.qubit.commons.test.model.Address;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

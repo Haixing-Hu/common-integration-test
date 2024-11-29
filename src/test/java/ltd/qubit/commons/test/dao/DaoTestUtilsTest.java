@@ -20,13 +20,13 @@ import ltd.qubit.commons.random.RandomBeanGenerator;
 import ltd.qubit.commons.test.dao.testbed.CountryDao;
 import ltd.qubit.commons.test.dao.testbed.CountryDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.Owner;
-import ltd.qubit.commons.test.model.City;
-import ltd.qubit.commons.test.model.Code;
-import ltd.qubit.commons.test.model.CodeMap;
-import ltd.qubit.commons.test.model.Country;
-import ltd.qubit.commons.test.model.District;
-import ltd.qubit.commons.test.model.Province;
-import ltd.qubit.commons.test.model.Street;
+import ltd.qubit.commons.test.dao.testbed.model.City;
+import ltd.qubit.commons.test.dao.testbed.model.Code;
+import ltd.qubit.commons.test.dao.testbed.model.CodeMap;
+import ltd.qubit.commons.test.dao.testbed.model.Country;
+import ltd.qubit.commons.test.dao.testbed.model.District;
+import ltd.qubit.commons.test.dao.testbed.model.Province;
+import ltd.qubit.commons.test.dao.testbed.model.Street;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,6 +76,7 @@ public class DaoTestUtilsTest {
         "eraseByCode",
         "exist",
         "existCode",
+        "existIf",
         "existName",
         "existNonDeleted",
         "existNonDeletedCode",

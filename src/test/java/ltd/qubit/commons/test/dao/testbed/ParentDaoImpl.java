@@ -8,11 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Child;
-import ltd.qubit.commons.test.model.Parent;
-
 import java.time.Instant;
 import java.util.List;
+
+import ltd.qubit.commons.test.dao.testbed.model.Child;
+import ltd.qubit.commons.test.dao.testbed.model.Parent;
 
 import static java.util.Objects.requireNonNull;
 
@@ -25,11 +25,12 @@ public class ParentDaoImpl extends SimpleDaoImpl<Parent> implements ParentDao {
     this.childDao = requireNonNull(childDao);
   }
 
-  public Instant add(Parent entity) {
+  @Override
+  public Instant add(final Parent entity) {
     final Instant result = super.add(entity);
     // TODO: check validity
     final List<Child> children = entity.getChildren();
-    for (Child child : children) {
+    for (final Child child : children) {
       child.setParentId(entity.getId());
       child.setGrandpaId(entity.getParentId());
       child.setParentCountry(entity.getCountry());

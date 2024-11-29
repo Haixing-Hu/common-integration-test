@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.dao.testbed;
 
-import ltd.qubit.commons.test.model.Info;
+import ltd.qubit.commons.test.dao.testbed.model.Info;
 
 /**
  * 此接口表示实现了对{@link Info}类进行查询、添加、更新、删除等基本操作的DAO。

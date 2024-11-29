@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import ltd.qubit.commons.reflect.BeanInfo;
 import ltd.qubit.commons.test.dao.testbed.CategoryDao;
 import ltd.qubit.commons.test.dao.testbed.CategoryDaoImpl;
+import ltd.qubit.commons.test.dao.testbed.ChildDao;
+import ltd.qubit.commons.test.dao.testbed.ChildDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.CityDao;
 import ltd.qubit.commons.test.dao.testbed.CityDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.CountryDao;
@@ -21,27 +23,31 @@ import ltd.qubit.commons.test.dao.testbed.DistrictDao;
 import ltd.qubit.commons.test.dao.testbed.DistrictDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.FamilyDao;
 import ltd.qubit.commons.test.dao.testbed.FamilyDaoImpl;
+import ltd.qubit.commons.test.dao.testbed.GrandpaDao;
+import ltd.qubit.commons.test.dao.testbed.GrandpaDaoImpl;
+import ltd.qubit.commons.test.dao.testbed.ParentDao;
+import ltd.qubit.commons.test.dao.testbed.ParentDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.ProvinceDao;
 import ltd.qubit.commons.test.dao.testbed.ProvinceDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.StreetDao;
 import ltd.qubit.commons.test.dao.testbed.StreetDaoImpl;
 import ltd.qubit.commons.test.dao.testbed.SubFamilyDao;
 import ltd.qubit.commons.test.dao.testbed.SubFamilyDaoImpl;
-import ltd.qubit.commons.test.model.Address;
-import ltd.qubit.commons.test.model.Category;
-import ltd.qubit.commons.test.model.Child;
-import ltd.qubit.commons.test.model.City;
-import ltd.qubit.commons.test.model.Contact;
-import ltd.qubit.commons.test.model.Country;
-import ltd.qubit.commons.test.model.District;
-import ltd.qubit.commons.test.model.Family;
-import ltd.qubit.commons.test.model.Grandpa;
-import ltd.qubit.commons.test.model.Info;
-import ltd.qubit.commons.test.model.Organization;
-import ltd.qubit.commons.test.model.Parent;
-import ltd.qubit.commons.test.model.Province;
-import ltd.qubit.commons.test.model.Street;
-import ltd.qubit.commons.test.model.SubFamily;
+import ltd.qubit.commons.test.dao.testbed.model.Address;
+import ltd.qubit.commons.test.dao.testbed.model.Category;
+import ltd.qubit.commons.test.dao.testbed.model.Child;
+import ltd.qubit.commons.test.dao.testbed.model.City;
+import ltd.qubit.commons.test.dao.testbed.model.Contact;
+import ltd.qubit.commons.test.dao.testbed.model.Country;
+import ltd.qubit.commons.test.dao.testbed.model.District;
+import ltd.qubit.commons.test.dao.testbed.model.Family;
+import ltd.qubit.commons.test.dao.testbed.model.Grandpa;
+import ltd.qubit.commons.test.dao.testbed.model.Info;
+import ltd.qubit.commons.test.dao.testbed.model.Organization;
+import ltd.qubit.commons.test.dao.testbed.model.Parent;
+import ltd.qubit.commons.test.dao.testbed.model.Province;
+import ltd.qubit.commons.test.dao.testbed.model.Street;
+import ltd.qubit.commons.test.dao.testbed.model.SubFamily;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,6 +66,9 @@ public class BeanCreatorTest {
   private final CategoryDao categoryDao = new CategoryDaoImpl();
   private final SubFamilyDao subFamilyDao = new SubFamilyDaoImpl();
   private final FamilyDao familyDao = new FamilyDaoImpl(subFamilyDao);
+  private final ChildDao childDao = new ChildDaoImpl();
+  private final ParentDao parentDao = new ParentDaoImpl(childDao);
+  private final GrandpaDao grandpaDao = new GrandpaDaoImpl(parentDao);
   private final DaoTestGeneratorRegistry registry;
   private final BeanCreator creator;
 
@@ -72,7 +81,10 @@ public class BeanCreatorTest {
         .register(Street.class, streetDao)
         .register(Category.class, categoryDao)
         .register(Family.class, familyDao)
-        .register(SubFamily.class, subFamilyDao);
+        .register(SubFamily.class, subFamilyDao)
+        .register(Child.class, childDao)
+        .register(Parent.class, parentDao)
+        .register(Grandpa.class, grandpaDao);
     creator = new BeanCreator(registry);
   }
 
