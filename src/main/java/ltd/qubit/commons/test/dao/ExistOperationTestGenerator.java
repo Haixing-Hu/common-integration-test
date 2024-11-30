@@ -29,10 +29,10 @@ public class ExistOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
   }
 
   private void existOfExistingModel(final DaoDynamicTestBuilder builder) {
-    final String displayName = getDisplayName("Existing " + identifierName);
+    final String displayName = getDisplayName("Existing " + identifier.getName());
     builder.add(displayName, () -> {
       logger.info("Test {}: Test the existence of an existing {}",
-          methodName, identifierName);
+          methodName, identifier.getName());
       final Object model = beanCreator.prepare(modelInfo, identifier);
       daoInfo.add(model);  //  dao.add(model)
       final Object actual = doTestExistence(model); // dao.existProp(prop)
@@ -40,15 +40,15 @@ public class ExistOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
       assertEquals(Boolean.class, actual.getClass(), "The returned type of "
           + methodName + " must be boolean.");
       assertTrue((Boolean) actual, "Calling " + methodName + " with an existing "
-          + identifierName + " must return true.");
+          + identifier.getName() + " must return true.");
     });
   }
 
   private void existOfNonExistingModel(final DaoDynamicTestBuilder builder) {
-    final String displayName = getDisplayName("Non existing " + identifierName);
+    final String displayName = getDisplayName("Non existing " + identifier.getName());
     builder.add(displayName, () -> {
       logger.info("Test {}: Test the existence of a non-existing {}",
-          methodName, identifierName);
+          methodName, identifier.getName());
       final Object model = beanCreator.prepare(modelInfo, identifier);
       // 要确保准备好的bean的ID不是null
       if (identifier.getValue(model) == null) {
@@ -59,7 +59,7 @@ public class ExistOperationTestGenerator<T> extends DaoOperationTestGenerator<T>
       assertEquals(Boolean.class, actual.getClass(), "The returned type of "
           + methodName + " must be boolean.");
       assertFalse(actual, "Calling " + methodName + " with a non-existing "
-          + identifierName + " must return false.");
+          + identifier.getName() + " must return false.");
     });
   }
 

@@ -30,10 +30,10 @@ public class ExistNonDeletedOperationTestGenerator<T> extends DaoOperationTestGe
   }
 
   private void existOfExistingNonDeletedModel(final DaoDynamicTestBuilder builder) {
-    final String displayName = getDisplayName("Existing non-deleted " + identifierName);
+    final String displayName = getDisplayName("Existing non-deleted " + identifier.getName());
     builder.add(displayName, () -> {
       logger.info("Test {}: Test the existence of an existing non-deleted {}",
-          methodName, identifierName);
+          methodName, identifier.getName());
       final Object model = beanCreator.prepare(modelInfo, identifier);
       daoInfo.add(model);  //  dao.add(model)
       final Object actual = doTestExistence(model); // dao.existNonDeletedXxx(prop)
@@ -41,15 +41,15 @@ public class ExistNonDeletedOperationTestGenerator<T> extends DaoOperationTestGe
       assertEquals(Boolean.class, actual.getClass(), "The returned type of "
           + methodName + " must be boolean.");
       assertTrue((Boolean) actual, "Calling " + methodName + " with an existing non-deleted "
-          + identifierName + " must return true.");
+          + identifier.getName() + " must return true.");
     });
   }
 
   private void existOfExistingDeletedModel(final DaoDynamicTestBuilder builder) {
-    final String displayName = getDisplayName("Existing deleted " + identifierName);
+    final String displayName = getDisplayName("Existing deleted " + identifier.getName());
     builder.add(displayName, () -> {
       logger.info("Test {}: Test the existence of an existing deleted {}",
-          methodName, identifierName);
+          methodName, identifier.getName());
       final Object model = beanCreator.prepare(modelInfo, identifier);
       daoInfo.add(model);                       //  dao.add(model)
       daoInfo.delete(modelInfo.getId(model));   //  dao.delete(model.id)
@@ -58,15 +58,15 @@ public class ExistNonDeletedOperationTestGenerator<T> extends DaoOperationTestGe
       assertEquals(Boolean.class, actual.getClass(), "The returned type of "
           + methodName + " must be boolean.");
       assertFalse((Boolean) actual, "Calling " + methodName + " with an existing deleted "
-          + identifierName + " must return false.");
+          + identifier.getName() + " must return false.");
     });
   }
 
   private void existOfNonExistingModel(final DaoDynamicTestBuilder builder) {
-    final String displayName = getDisplayName("Non existing " + identifierName);
+    final String displayName = getDisplayName("Non existing " + identifier.getName());
     builder.add(displayName, () -> {
       logger.info("Test {}: Test the existence of a non-existing {}",
-          methodName, identifierName);
+          methodName, identifier.getName());
       final Object model = beanCreator.prepare(modelInfo);
       // 要确保准备好的bean的ID不是null
       if (identifier.getValue(model) == null) {
@@ -77,7 +77,7 @@ public class ExistNonDeletedOperationTestGenerator<T> extends DaoOperationTestGe
       assertEquals(Boolean.class, actual.getClass(), "The returned type of "
           + methodName + " must be boolean.");
       assertFalse((Boolean) actual, "Calling " + methodName + " with a non-existing "
-          + identifierName + " must return false.");
+          + identifier.getName() + " must return false.");
     });
   }
 
