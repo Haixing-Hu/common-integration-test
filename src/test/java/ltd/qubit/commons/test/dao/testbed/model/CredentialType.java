@@ -129,7 +129,7 @@ public enum CredentialType implements LocalizedEnum {
   }
 
   static {
-    registerLocalizedNames(CredentialType.class, "i18n/credential-type");
+    registerLocalizedNames(CredentialType.class, "i18n.credential-type");
   }
 
   public static CredentialType forCode(final String code) {
