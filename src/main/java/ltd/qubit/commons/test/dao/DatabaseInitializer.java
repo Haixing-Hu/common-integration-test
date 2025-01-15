@@ -32,7 +32,11 @@ public class DatabaseInitializer {
 
   public void init() {
     logger.info("Initialize the database ...");
-    final Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+    final Flyway flyway = Flyway
+        .configure()
+        .dataSource(dataSource)
+        .locations("classpath:/db/migration")  // 从类路径的 /db/migration 中加载 SQL 文件，从而可以从依赖的classpath中加载SQL文件
+        .load();
     logger.info("Clean the database...");
     flyway.clean();
     logger.info("Creating the database...");
