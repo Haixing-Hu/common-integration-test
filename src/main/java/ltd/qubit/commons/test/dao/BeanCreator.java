@@ -29,7 +29,6 @@ import ltd.qubit.commons.util.Result;
 import ltd.qubit.commons.util.range.CloseRange;
 
 import static ltd.qubit.commons.lang.StringUtils.isEmpty;
-import static ltd.qubit.commons.test.dao.DaoTestUtils.getActualSizeRange;
 import static ltd.qubit.commons.test.dao.EntityInfo.PARENT_PATH;
 import static ltd.qubit.commons.test.dao.EntityInfo.PATH_SEPARATOR;
 
@@ -378,15 +377,17 @@ public class BeanCreator {
       final EntityInfoStack stack,
       final EntityRegistry registry) throws Throwable {
     final EntityInfo entityInfo = stack.peek();
-    for (final Property prop : modelInfo.getReferenceProperties()) {
+    final List<Property> referenceProps = modelInfo.getReferenceProperties();
+    for (final Property prop : referenceProps) {
       if (isEmpty(prop.getReferencePath())) {
         // 处理不存在引用Path的情况
-        if (prop.getValue(model) == null) {
+        final Object value = prop.getValue(model);
+        if (value == null) {
           // 如果该属性随机产生的值是null，无需再修正，直接将其注册到哈希表
           registry.put(model, prop, null);
         } else {
           // 重新设置该引用属性的值，注意下面的函数中会递归调用本函数
-          setReferenceProperty(model, prop, stack, registry);
+          setReferenceProperty(model, prop, value, stack, registry);
         }
       } else {
         // 对于具有 path 的引用属性，将其加入到对象树中对应节点的 referencedProperties中，
@@ -602,16 +603,22 @@ public class BeanCreator {
    *     当前的模型对象。
    * @param property
    *     当前的引用属性。
+   * @param value
+   *     当前模型的指定引用属性的值，注意这个值不能为{@code null}。
+   * @param stack
+   *     实体信息堆栈。
+   * @param registry
+   *     实体信息注册器。
    * @throws Throwable
    *     若发生任何错误。
    */
   private void setReferenceProperty(final Object model, final Property property,
-      final EntityInfoStack stack, final EntityRegistry registry)
+      final Object value, final EntityInfoStack stack, final EntityRegistry registry)
       throws Throwable {
+    assert (value != null);
     final Class<?> entityType = property.getReferenceEntity();
     if (property.isIndirectReference()) {
       // 该属性本身没有直接引用其他实体，但其内部属性引用了其他实体，因此需要递归处理其内部属性
-      final Object value = property.getValue(model);
       final BeanInfo valueInfo = BeanInfo.of(property.getType());
       // 递归处理此属性值所有内部引用属性
       stack.push(new EntityInfo(valueInfo.getType(), value, property));
@@ -619,7 +626,7 @@ public class BeanCreator {
       stack.pop();
     } else if (!property.isReferenceExisting()) {
       // 如果该属性可以为不存在的对象，则可设置为随机对象
-      setReferencePropertyToNonExistingValue(model, property, stack, registry);
+      setReferencePropertyToNonExistingValue(model, property, value, stack, registry);
     } else if (stack.containsType(entityType)) {  // 发现一个循环依赖
       if (property.isNullable()) {
         // 如果该属性可以为null则直接设置为null解决循环
@@ -630,7 +637,7 @@ public class BeanCreator {
         throw new ReferenceDependencyLoopException(stack.getTypeStack());
       }
     } else {  // 一般情况
-      setReferencePropertyToExistingValue(model, property, stack, registry);
+      setReferencePropertyToExistingValue(model, property, value, stack, registry);
     }
   }
 
@@ -653,50 +660,57 @@ public class BeanCreator {
 
    /**
     * 设置引用属性值为不存在于数据库中的随机值。
-    *
-    * <p>此函数将递归地创建随机的被引用实体对象，但并不需要将其加入数据库，直接将其指定属性值设
-    * 置为指定模型对象的引用属性值。</p>
-    *
-    * <p>此函数不存在递归调用。</p>
+    * <p>
+    * 此函数将递归地创建随机的被引用实体对象，但并不需要将其加入数据库，直接将其指定属性值设
+    * 置为指定模型对象的引用属性值。
     *
     * @param model
     *     当前的模型对象。
     * @param property
     *     当前的引用属性。
+    * @param value
+    *     当前模型的指定引用属性的值，注意这个值不能为{@code null}。
+    * @param stack
+    *     实体信息堆栈。
+    * @param registry
+    *     实体信息注册器。
     */
    private void setReferencePropertyToNonExistingValue(final Object model,
-       final Property property, final EntityInfoStack entityInfoStack,
-       final EntityRegistry entityRegistry) throws Throwable {
+       final Property property, final Object value, final EntityInfoStack stack,
+       final EntityRegistry registry) throws Throwable {
+     assert (value != null);
      final Class<?> refEntityType = property.getReferenceEntity();
      final BeanInfo refEntityBeanInfo = BeanInfo.of(refEntityType);
      if (property.isArray() || property.isCollection()) {
-       // 对当前引用属性为数组或集合的情况，随机生成若干被引用实体，并获取其被引用值
-       final CloseRange<Integer> range = getActualSizeRange(property);
-       final int n = random.nextInt(range);
-       final List<Object> entities = new ArrayList<>();
-       final List<Object> values = new ArrayList<>();
+       // 注意对于数组和集合属性，无需再随机生成数组大小；因为前面生成的数组或集合已经考虑了
+       // 根据 @NotEmpty 或 @Size 注解确定其大小的范围，现在无需再重复考虑
+       final int n;
+       if (property.isArray()) {
+         n = ((Object[]) value).length;
+       } else {
+         n = ((Collection<?>) value).size();
+       }
+       final List<Object> newEntities = new ArrayList<>();
+       final List<Object> newValues = new ArrayList<>();
        for (int i = 0; i < n; ++i) {
          // 递归调用另一个不同entityInfoStack的prepareImpl()
-         final Object entity = prepareImpl(refEntityBeanInfo, property,
-             entityInfoStack, entityRegistry);
-         entities.add(entity);
-         final Object value = getReferToPropertyValue(property, entity);
-         values.add(value);
+         final Object entity = prepareImpl(refEntityBeanInfo, property, stack, registry);
+         newEntities.add(entity);
+         final Object newValue = getReferToPropertyValue(property, entity);
+         newValues.add(newValue);
        }
        // 在registry中记录当前对象当前属性所引用的实体列表
-       entityRegistry.put(model, property, entities);
-       if (property.isCollection()) {
-         property.setValue(model, values);
+       registry.put(model, property, newEntities);
+       if (property.isArray()) {
+         property.setValue(model, newValues.toArray());
        } else {
-         // property.isArray() == true
-         property.setValue(model, values.toArray());
+         property.setValue(model, newValues);
        }
      } else {
        // 递归调用另一个不同entityInfoStack的prepareImpl()
-       final Object entity = prepareImpl(refEntityBeanInfo, property,
-           entityInfoStack, entityRegistry);
-       final Object value = getReferToPropertyValue(property, entity);
-       property.setValue(model, value);
+       final Object entity = prepareImpl(refEntityBeanInfo, property, stack, registry);
+       final Object newValue = getReferToPropertyValue(property, entity);
+       property.setValue(model, newValue);
      }
    }
 
@@ -710,22 +724,30 @@ public class BeanCreator {
    *     当前的模型对象。
    * @param property
    *     当前的引用属性。
-   * @throws Throwable
-   *     若发生任何错误。
+   * @param value
+   *     当前模型的指定引用属性的值，注意这个值不能为{@code null}。
+   * @param stack
+   *     实体信息堆栈。
+   * @param registry
+   *     实体信息注册器。
    */
   private void setReferencePropertyToExistingValue(final Object model,
-      final Property property, final EntityInfoStack stack,
+      final Property property, final Object value, final EntityInfoStack stack,
       final EntityRegistry registry) throws Throwable {
-    final Object value;
-    if (property.isArray() || property.isCollection()) {
-      // 对当前引用属性为数组或集合的情况，随机生成若干被引用实体，并获取其被引用值
-      final CloseRange<Integer> range = getActualSizeRange(property);
-      final int n = random.nextInt(range);
-      value = prepareReferToValue(n, model, property, stack, registry);    // 会触发递归调用
+    assert (value != null);
+    final Object newValue;
+    // 注意对于数组和集合属性，无需再随机生成数组大小；因为前面生成的数组或集合已经考虑了
+    // 根据 @NotEmpty 或 @Size 注解确定其大小的范围，现在无需再重复考虑
+    if (property.isArray()) {
+      final int n = ((Object[]) value).length;                                // 注意无需再随机生成数组大小
+      newValue = prepareReferToValues(n, model, property, stack, registry);   // 会触发递归调用
+    } else if (property.isCollection()) {
+      final int n = ((Collection<?>) value).size();                           // 注意无需再随机生成集合大小
+      newValue = prepareReferToValues(n, model, property, stack, registry);   // 会触发递归调用
     } else {
-      value = prepareReferToValue(model, property, stack, registry);       // 会触发递归调用
+      newValue = prepareReferToValue(model, property, stack, registry);       // 会触发递归调用
     }
-    property.setValue(model, value);
+    property.setValue(model, newValue);
   }
 
   /**
@@ -742,7 +764,7 @@ public class BeanCreator {
    * @throws Throwable
    *     若发生任何错误。
    */
-  private Object prepareReferToValue(final int count, final Object model,
+  private Object prepareReferToValues(final int count, final Object model,
       final Property property, final EntityInfoStack stack,
       final EntityRegistry registry) throws Throwable {
     final List<Object> entities = new ArrayList<>();
