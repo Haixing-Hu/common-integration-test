@@ -15,8 +15,8 @@ import ltd.qubit.commons.sql.SimpleCriterion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import static ltd.qubit.commons.sql.ComparisonOperator.EQUAL;
-import static ltd.qubit.commons.sql.ComparisonOperator.NOT_EQUAL;
+import static ltd.qubit.commons.util.ComparisonOperator.EQUAL;
+import static ltd.qubit.commons.util.ComparisonOperator.NOT_EQUAL;
 
 public class ExistIfOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
 
