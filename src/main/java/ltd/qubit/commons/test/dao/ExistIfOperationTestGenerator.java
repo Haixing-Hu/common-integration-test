@@ -39,6 +39,7 @@ public class ExistIfOperationTestGenerator<T> extends DaoOperationTestGenerator<
     builder.add(displayName, () -> {
       logger.info("Test {}: Tests the existence of entities on an empty table with a null criterion.",
           methodName);
+      daoInfo.clear();
       final Boolean result = (Boolean) methodInfo.invoke(true, null);
       assertNotNull(result, "Return value of " + methodName + " cannot be null.");
       assertEquals(false, result, "Calling " + methodName + " on an empty table with"
