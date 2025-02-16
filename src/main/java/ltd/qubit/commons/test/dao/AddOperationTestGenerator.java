@@ -84,6 +84,7 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
           && (!prop.isReadonly())
           && (!prop.isComputed())
           && (!prop.isPrimitive())
+          && (!prop.isReferenceToPath())
           && methodInfo.isUnmodified(prop)) {
         final String displayName = getDisplayName(modelName + " with a null `" + prop.getName() + "`");
         builder.add(displayName, () -> {
@@ -109,6 +110,7 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
           && (prop.getType() == String.class)
           && (!prop.isReadonly())
           && (!prop.isComputed())
+          && (!prop.isReferenceToPath())
           && methodInfo.isUnmodified(prop)) {
         final int maxSize = prop.getSizeRange().getMax();
         final String displayName = getDisplayName(modelName
@@ -135,6 +137,7 @@ public class AddOperationTestGenerator<T> extends DaoOperationTestGenerator<T> {
       if ((prop.isUnique())
           && (!prop.isReadonly())
           && (!prop.isComputed())
+          && (!prop.isReferenceToPath())
           && methodInfo.isUnmodified(prop)) {
         final String displayName = getDisplayName(modelName
             + " with a duplicated `" + prop.getName() + "`");

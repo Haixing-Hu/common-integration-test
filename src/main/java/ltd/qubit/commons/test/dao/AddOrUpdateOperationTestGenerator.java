@@ -111,6 +111,7 @@ public class AddOrUpdateOperationTestGenerator<T>
           && (!prop.isReadonly())
           && (!prop.isComputed())
           && (!prop.isPrimitive())
+          && (!prop.isReferenceToPath())
           && addMethodInfo.isUnmodified(prop)
           && (!prop.equals(methodInfo.getIdentifier()))) {
         final String displayName = getDisplayName("Non-existing " + modelName
@@ -141,6 +142,7 @@ public class AddOrUpdateOperationTestGenerator<T>
           && (prop.getType() == String.class)
           && (!prop.isReadonly())
           && (!prop.isComputed())
+          && (!prop.isReferenceToPath())
           && addMethodInfo.isUnmodified(prop)) {
         final int maxSize = prop.getSizeRange().getMax();
         final String displayName = getDisplayName("Non-existing " + modelName
@@ -169,6 +171,7 @@ public class AddOrUpdateOperationTestGenerator<T>
       if ((prop.isUnique())
           && (!prop.isReadonly())
           && (!prop.isComputed())
+          && (!prop.isReferenceToPath())
           && addMethodInfo.isUnmodified(prop)
           && (!prop.equals(methodInfo.getIdentifier()))) {
         final String displayName = getDisplayName("Non-existing " + modelName
@@ -262,6 +265,7 @@ public class AddOrUpdateOperationTestGenerator<T>
           && (!prop.isReadonly())
           && (!prop.isComputed())
           && (!prop.isPrimitive())
+          && (!prop.isReferenceToPath())
           && updateMethodInfo.isModified(prop)) {
         final String displayName = getDisplayName("Existing " + modelName
             + " with a null " + prop.getName());
@@ -295,6 +299,7 @@ public class AddOrUpdateOperationTestGenerator<T>
           && (prop.getType() == String.class)
           && (!prop.isReadonly())
           && (!prop.isComputed())
+          && (!prop.isReferenceToPath())
           && updateMethodInfo.isModified(prop)) {
         final int maxSize = prop.getSizeRange().getMax();
         final String displayName = getDisplayName("Existing " + modelName
@@ -325,6 +330,7 @@ public class AddOrUpdateOperationTestGenerator<T>
       if ((prop.isUnique())
           && (!prop.isReadonly())
           && (!prop.isComputed())
+          && (!prop.isReferenceToPath())
           && updateMethodInfo.isModified(prop)) { // 注意需要通过update方法来确定修改的属性
         final String displayName = getDisplayName("Existing " + modelName
             + " with a duplicated " + prop.getName());
